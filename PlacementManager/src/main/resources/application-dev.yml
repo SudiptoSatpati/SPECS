@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/placements
+    username: exceptional
+    password: 1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+#  mail:
+#    host: smtp.gmail.com
+#    port: 587
+#    username: bd27official@gmail.com
+#    password: ftdi whvk mlbv ocqu
+#    properties:
+#      mail:
+#        smtp:
+#          auth: true
+#          starttls:
+#            enable: true
+
+  #  app:
+  #    jwtSecret: D87naQQD45gu7bRUygV5lGHeiZgR6zML3eQQHVOuFRY=
+  #    jwtExpirationMs: 3000000
+
