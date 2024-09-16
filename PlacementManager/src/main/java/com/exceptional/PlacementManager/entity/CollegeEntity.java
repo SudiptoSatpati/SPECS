@@ -5,20 +5,20 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Set;
-
+import java.util.List;
 
 @Entity
-@Table(name = "roles")
+@Table(name = "colleges")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class RoleEntity {
+public class CollegeEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String name;
 
 }

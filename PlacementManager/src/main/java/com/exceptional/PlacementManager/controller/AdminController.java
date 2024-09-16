@@ -2,6 +2,7 @@ package com.exceptional.PlacementManager.controller;
 
 import com.exceptional.PlacementManager.dto.CompanyDto;
 import com.exceptional.PlacementManager.service.AdminService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -15,7 +16,7 @@ public class AdminController {
     }
 
     @PostMapping("/insert")
-    public CompanyDto addCompany(@RequestBody CompanyDto companyDto) {
+    public ResponseEntity<String> addCompany(@RequestBody CompanyDto companyDto) {
         return adminService.addCompany(companyDto);
     }
 

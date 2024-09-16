@@ -17,15 +17,34 @@ public class CompanyEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private String job_location;
+
+    @Column(nullable = false)
     private String job_role;
+
+    @Column(nullable = false)
     private String job_type;
+
+    @Column(nullable = false)
     private String offered_ctc;
+
     private String criteria;
-    private List<String> streams;
+
+    private List<String> departments;
+
     private String additional_info;
+
     private String arriving_time;
+
     private List<String> selected_candidates;
+
+    @ManyToOne
+    @JoinColumn(name = "college_id", nullable = false)
+    private CollegeEntity college;
 
 }

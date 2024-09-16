@@ -15,5 +15,7 @@ public class RegistrationDto {
     private String email;
     private String password;
     private String otp;
+    private String department;
+    private String college;
     private Set<String> roles = new HashSet<>();
 }

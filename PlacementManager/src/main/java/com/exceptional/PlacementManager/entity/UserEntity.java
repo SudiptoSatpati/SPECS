@@ -21,13 +21,19 @@ public class UserEntity {
     private Long id;
 
     @Email
-    @NotEmpty
     @Column(nullable = false, unique = true)
     private String email;
 
-    @NotEmpty
     @Column(nullable = false)
     private String password;
+
+    @ManyToOne
+    @JoinColumn(name = "department_id", nullable = false)
+    private DepartmentEntity department;
+
+    @ManyToOne
+    @JoinColumn(name = "college_id", nullable = false)
+    private CollegeEntity college;
 
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(

@@ -2,6 +2,7 @@ package com.exceptional.PlacementManager.service;
 
 import com.exceptional.PlacementManager.dto.LoginRequestDto;
 import com.exceptional.PlacementManager.dto.RegistrationDto;
+import com.exceptional.PlacementManager.dto.UpdatePasswordDto;
 import com.exceptional.PlacementManager.entity.RoleEntity;
 import com.exceptional.PlacementManager.entity.UserEntity;
 import com.exceptional.PlacementManager.repository.UserRepository;
@@ -22,16 +23,24 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final RoleService roleService;
+    private final DepartmentService departmentService;
+    private final CollegeService collegeService;
     private final AuthenticationManager authenticationManager;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public AuthService(UserRepository userRepository, RoleService roleService, AuthenticationManager authenticationManager) {
+    public AuthService(
+            UserRepository userRepository,
+            RoleService roleService,
+            DepartmentService departmentService,
+            CollegeService collegeService,
+            AuthenticationManager authenticationManager
+    ) {
         this.userRepository = userRepository;
         this.roleService = roleService;
+        this.departmentService = departmentService;
+        this.collegeService = collegeService;
         this.authenticationManager = authenticationManager;
     }
-
-
 
     public ResponseEntity<String> registerUser(RegistrationDto registrationDto) {
         if (userRepository.findByEmail(registrationDto.getEmail()) != null) {
@@ -40,8 +49,10 @@ public class AuthService {
         UserEntity userEntity = new UserEntity();
         userEntity.setEmail(registrationDto.getEmail());
         userEntity.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
+        userEntity.setDepartment(departmentService.findOrCreateDepartment(registrationDto.getDepartment()));
+        userEntity.setCollege(collegeService.findOrCreateCollege(registrationDto.getCollege()));
         Set<RoleEntity> roles = new HashSet<>();
-        for(String role: registrationDto.getRoles()) {
+        for (String role : registrationDto.getRoles()) {
             roles.add(roleService.findOrCreateRole(role));
         }
         userEntity.setRoles(roles);
@@ -49,8 +60,7 @@ public class AuthService {
         return ResponseEntity.ok("User registered successfully.");
     }
 
-
-    public String authenticateUser(LoginRequestDto loginRequestDto) {
+    public ResponseEntity<String> authenticateUser(LoginRequestDto loginRequestDto) {
         try {
             Authentication authentication = authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(
@@ -59,17 +69,28 @@ public class AuthService {
                     )
             );
             SecurityContextHolder.getContext().setAuthentication(authentication);
-            return "User signed in successfully!";
+            return ResponseEntity.ok("User signed in successfully!");
         } catch (AuthenticationException e) {
-            return "Invalid username or password!";
+            return ResponseEntity.badRequest().body("Invalid username or password!");
         }
     }
 
-    public UserEntity findByUsername(String email) {
-        return userRepository.findByEmail(email);
+    public ResponseEntity<String> updateUserPassword(UpdatePasswordDto updatePasswordDto) {
+        UserEntity userEntity = userRepository.findByEmail(updatePasswordDto.getEmail());
+        if (userEntity == null) {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+
+        userEntity.setPassword(passwordEncoder.encode(updatePasswordDto.getNew_password()));
+        userRepository.save(userEntity);
+        return ResponseEntity.ok("Password updated successfully");
     }
 
-    public String getCurrentUsername() {
+    public UserEntity getCurrentUserByEmail() {
+        return userRepository.findByEmail(getCurrentEmail());
+    }
+
+    public String getCurrentEmail() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.isAuthenticated()) {
@@ -82,6 +103,5 @@ public class AuthService {
         }
         return null;
     }
-
 
 }

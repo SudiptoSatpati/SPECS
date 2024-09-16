@@ -17,8 +17,9 @@ public class CompanyDto {
     private String job_type;
     private String offered_ctc;
     private String criteria;
-    private List<String> streams;
+    private List<String> departments;
     private String additional_info;
     private String arriving_time;
     private List<String> selected_candidates;
+    private String college;
 }
