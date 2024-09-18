@@ -1,7 +1,10 @@
 package com.exceptional.PlacementManager.config;
 
+import com.exceptional.PlacementManager.jwt.JwtFilter;
+import com.exceptional.PlacementManager.jwt.JwtUtils;
 import com.exceptional.PlacementManager.service.MyUserDetailsService;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,18 +18,16 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-
+    private final JwtFilter jwtFilter;
     private final MyUserDetailsService userDetailsService;
-
-    public SecurityConfig(MyUserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -46,8 +47,8 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)  // Invalidate the session
                         .deleteCookies("JSESSIONID")  // Delete the session cookie
                 )
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
-
     }
 
     @Bean
@@ -55,8 +56,6 @@ public class SecurityConfig {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
         provider.setPasswordEncoder(new BCryptPasswordEncoder(12));
         provider.setUserDetailsService(userDetailsService);
-
-
         return provider;
     }
 

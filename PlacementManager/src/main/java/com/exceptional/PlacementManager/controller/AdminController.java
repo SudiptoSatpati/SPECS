@@ -1,34 +1,25 @@
 package com.exceptional.PlacementManager.controller;
 
-import com.exceptional.PlacementManager.dto.CompanyDto;
+import com.exceptional.PlacementManager.dto.OfferDto;
+import com.exceptional.PlacementManager.entity.OfferEntity;
 import com.exceptional.PlacementManager.service.AdminService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/company")
+@RequiredArgsConstructor
+@RequestMapping("/job-offers")
 public class AdminController {
 
     private final AdminService adminService;
 
-    public AdminController(AdminService adminService) {
-        this.adminService = adminService;
-    }
-
     @PostMapping("/insert")
-    public ResponseEntity<String> addCompany(@RequestBody CompanyDto companyDto) {
-        return adminService.addCompany(companyDto);
+    public ResponseEntity<String> addCompany(@RequestBody OfferDto offerDto) {
+        return adminService.addJobOffer(offerDto);
     }
-
-    @PostMapping("/show")
-    public CompanyDto showCompany(@RequestBody String company_name) throws Exception {
-        return adminService.showCompany(company_name);
-    }
-
-//    @GetMapping("/show")
-//    public CompanyDto showCompany(@RequestParam String company_name) {
-//        return adminService.showCompany(company_name);
-//    }
 
 
 }

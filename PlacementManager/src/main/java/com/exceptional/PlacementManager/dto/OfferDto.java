@@ -9,9 +9,10 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CompanyDto {
+public class OfferDto {
     private Long id;
     private String name;
+    private String logo;
     private String job_location;
     private String job_role;
     private String job_type;

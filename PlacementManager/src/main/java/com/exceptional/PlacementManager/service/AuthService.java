@@ -5,12 +5,13 @@ import com.exceptional.PlacementManager.dto.RegistrationDto;
 import com.exceptional.PlacementManager.dto.UpdatePasswordDto;
 import com.exceptional.PlacementManager.entity.RoleEntity;
 import com.exceptional.PlacementManager.entity.UserEntity;
+import com.exceptional.PlacementManager.jwt.JwtUtils;
 import com.exceptional.PlacementManager.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -19,6 +20,7 @@ import java.util.*;
 
 
 @Service
+@RequiredArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
@@ -26,21 +28,9 @@ public class AuthService {
     private final DepartmentService departmentService;
     private final CollegeService collegeService;
     private final AuthenticationManager authenticationManager;
+    private final JwtUtils jwtUtils;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    public AuthService(
-            UserRepository userRepository,
-            RoleService roleService,
-            DepartmentService departmentService,
-            CollegeService collegeService,
-            AuthenticationManager authenticationManager
-    ) {
-        this.userRepository = userRepository;
-        this.roleService = roleService;
-        this.departmentService = departmentService;
-        this.collegeService = collegeService;
-        this.authenticationManager = authenticationManager;
-    }
 
     public ResponseEntity<String> registerUser(RegistrationDto registrationDto) {
         if (userRepository.findByEmail(registrationDto.getEmail()) != null) {
@@ -61,16 +51,15 @@ public class AuthService {
     }
 
     public ResponseEntity<String> authenticateUser(LoginRequestDto loginRequestDto) {
-        try {
-            Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginRequestDto.getEmail(),
-                            loginRequestDto.getPassword()
-                    )
-            );
-            SecurityContextHolder.getContext().setAuthentication(authentication);
-            return ResponseEntity.ok("User signed in successfully!");
-        } catch (AuthenticationException e) {
+        Authentication authentication = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(
+                        loginRequestDto.getEmail(),
+                        loginRequestDto.getPassword()
+                )
+        );
+        if (authentication.isAuthenticated()) {
+            return ResponseEntity.ok("User signed in successfully! \n Token: " + jwtUtils.generateToken(loginRequestDto.getEmail()));
+        } else {
             return ResponseEntity.badRequest().body("Invalid username or password!");
         }
     }

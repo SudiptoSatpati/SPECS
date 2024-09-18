@@ -6,6 +6,7 @@ import com.exceptional.PlacementManager.dto.UpdatePasswordDto;
 import com.exceptional.PlacementManager.entity.UserEntity;
 import com.exceptional.PlacementManager.service.AuthService;
 import com.exceptional.PlacementManager.service.OTPService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -14,15 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 @RestController
+@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
     private final OTPService otpService;
-
-    public AuthController(AuthService authService, OTPService otpService) {
-        this.authService = authService;
-        this.otpService = otpService;
-    }
 
     @PostMapping("/register")
     public String registerUser(@RequestBody String email) {

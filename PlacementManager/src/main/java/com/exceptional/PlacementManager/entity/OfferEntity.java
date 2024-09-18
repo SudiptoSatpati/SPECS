@@ -8,11 +8,11 @@ import lombok.NoArgsConstructor;
 import java.util.List;
 
 @Entity
-@Table(name = "companies")
+@Table(name = "job_offers")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class CompanyEntity {
+public class OfferEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -20,6 +20,9 @@ public class CompanyEntity {
 
     @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
+    private String logo;
 
     @Column(nullable = false)
     private String job_location;

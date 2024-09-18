@@ -3,16 +3,14 @@ package com.exceptional.PlacementManager.service;
 import com.exceptional.PlacementManager.entity.CollegeEntity;
 import com.exceptional.PlacementManager.repository.CollegeRepository;
 import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 @Service
+@RequiredArgsConstructor
 public class CollegeService {
 
     private final CollegeRepository collegeRepository;
-
-    public CollegeService(CollegeRepository collegeRepository) {
-        this.collegeRepository = collegeRepository;
-    }
 
     @Transactional
     public CollegeEntity findOrCreateCollege(String collegeName) {

@@ -10,19 +10,7 @@ spring:
       ddl-auto: update
     show-sql: true
 
-#  mail:
-#    host: smtp.gmail.com
-#    port: 587
-#    username: bd27official@gmail.com
-#    password: ftdi whvk mlbv ocqu
-#    properties:
-#      mail:
-#        smtp:
-#          auth: true
-#          starttls:
-#            enable: true
-
-  #  app:
-  #    jwtSecret: D87naQQD45gu7bRUygV5lGHeiZgR6zML3eQQHVOuFRY=
-  #    jwtExpirationMs: 3000000
+  app:
+    jwtSecret: D87naQQD45gu7bRUygV5lGHeiZgR6zML3eQQHVOuFRY=
+    jwtExpirationMs: 259200000 #3days
 

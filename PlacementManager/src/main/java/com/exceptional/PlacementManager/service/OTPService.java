@@ -1,5 +1,6 @@
 package com.exceptional.PlacementManager.service;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
@@ -9,15 +10,13 @@ import java.util.Map;
 import java.util.Random;
 
 @Service
+@RequiredArgsConstructor
 public class OTPService {
 
     private final Map<String, String> otpStorage = new HashMap<>();
     private final Random random = new Random();
     private final JavaMailSender mailSender;
 
-    public OTPService(JavaMailSender mailSender) {
-        this.mailSender = mailSender;
-    }
 
 
     public String generateOTP(String key) {
