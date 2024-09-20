@@ -75,7 +75,7 @@ public class AuthService {
         return ResponseEntity.ok("Password updated successfully");
     }
 
-    public UserEntity getCurrentUserByEmail() {
+    public UserEntity getCurrentUser() {
         return userRepository.findByEmail(getCurrentEmail());
     }
 

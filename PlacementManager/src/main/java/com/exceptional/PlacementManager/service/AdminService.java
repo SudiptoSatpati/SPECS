@@ -17,13 +17,15 @@ public class AdminService {
     private final OfferRepository offerRepository;
     private final CollegeRepository collegeRepository;
     private final CollegeService collegeService;
+    private final AuthService authService;
 
     public ResponseEntity<String> addJobOffer(OfferDto offerDto) {
 
-        if(collegeRepository.findByName(offerDto.getCollege()) == null)
+        String college = authService.getCurrentUser().getCollege().getName();
+        if(collegeRepository.findByName(college) == null)
             return ResponseEntity.badRequest().body("College is not registered");
         OfferEntity offerEntity = new OfferEntity();
-        offerEntity.setName(offerDto.getName());
+        offerEntity.setCompany(offerDto.getCompany());
         offerEntity.setCriteria(offerDto.getCriteria());
         offerEntity.setOffered_ctc(offerDto.getOffered_ctc());
         offerEntity.setArriving_time(offerDto.getArriving_time());
@@ -33,14 +35,14 @@ public class AdminService {
         offerEntity.setJob_location(offerDto.getJob_location());
         offerEntity.setDepartments(offerDto.getDepartments());
         offerEntity.setSelected_candidates(offerDto.getSelected_candidates());
-        offerEntity.setCollege(collegeService.findOrCreateCollege(offerDto.getCollege()));
+        offerEntity.setCollege(collegeService.findOrCreateCollege(college));
         offerEntity.setLogo(offerDto.getLogo());
         offerRepository.save(offerEntity);
         return ResponseEntity.ok("Company registered successfully");
     }
 
     public List<String> getSelectedCandidates(String company) {
-        return offerRepository.findByName(company).getSelected_candidates();
+        return offerRepository.findByCompany(company).getSelected_candidates();
     }
 
 }

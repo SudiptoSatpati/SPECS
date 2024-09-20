@@ -19,7 +19,7 @@ public class OfferEntity {
     private Long id;
 
     @Column(nullable = false)
-    private String name;
+    private String company;
 
     @Column(nullable = false)
     private String logo;

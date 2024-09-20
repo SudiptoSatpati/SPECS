@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ApplicationDto {
     private Long id;
-    private String email;
+//    private String email;
     private String name;
     private String address;
     private String phone_no;
@@ -50,4 +50,5 @@ public class ApplicationDto {
     private String backlogs;
     //--------------------------
     private String resume;
+    private String company;
 }

@@ -15,13 +15,27 @@ public class ApplicationEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
+
+    @Column(nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String name;
+
     private String address;
+
+    @Column(nullable = false)
     private String phone_no;
+
+    @Column(nullable = false)
     private String department;
+
+    @Column(nullable = false)
     private String dob;
+
+    @Column(nullable = false)
     private String sex;
+
     private String course_type;
     //school
     private String pct_10th;

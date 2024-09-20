@@ -8,6 +8,6 @@ import java.util.List;
 
 @Repository
 public interface OfferRepository extends JpaRepository<OfferEntity, Long> {
-    OfferEntity findByName(String company);
+    OfferEntity findByCompany(String company);
     List<OfferEntity> findByCollegeName(String college);
 }

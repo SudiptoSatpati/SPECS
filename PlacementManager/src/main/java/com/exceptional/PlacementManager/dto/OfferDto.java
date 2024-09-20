@@ -11,7 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 public class OfferDto {
     private Long id;
-    private String name;
+    private String company;
     private String logo;
     private String job_location;
     private String job_role;
@@ -22,5 +22,4 @@ public class OfferDto {
     private String additional_info;
     private String arriving_time;
     private List<String> selected_candidates;
-    private String college;
 }
