@@ -36,6 +36,8 @@ public class OfferEntity {
     @Column(nullable = false)
     private String offered_ctc;
 
+    private String job_description;
+
     private String criteria;
 
     private List<String> departments;

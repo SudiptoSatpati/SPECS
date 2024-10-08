@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface ApplicationRepository extends JpaRepository<ApplicationEntity, Long> {
     List<ApplicationEntity> findApplicationByOfferCompany(String company);
+    List<ApplicationEntity> findApplicationByEmail(String email);
 }

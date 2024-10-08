@@ -13,6 +13,7 @@ public class OfferDto {
     private Long id;
     private String company;
     private String logo;
+    private String job_description;
     private String job_location;
     private String job_role;
     private String job_type;

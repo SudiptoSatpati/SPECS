@@ -1,6 +1,8 @@
 package com.exceptional.PlacementManager.controller;
 
 import com.exceptional.PlacementManager.dto.ApplicationDto;
+import com.exceptional.PlacementManager.dto.OfferDto;
+import com.exceptional.PlacementManager.entity.ApplicationEntity;
 import com.exceptional.PlacementManager.entity.OfferEntity;
 import com.exceptional.PlacementManager.service.ApplicantService;
 import lombok.RequiredArgsConstructor;
@@ -18,13 +20,18 @@ public class ApplicantController {
     private final ApplicantService applicantService;
 
     @PostMapping("/job-offers")
-    public List<OfferEntity> getJobOffersByCollegeName(@RequestBody String college) {
+    public List<OfferDto> getJobOffersByCollegeName(@RequestBody String college) {
         return applicantService.fetchJobOffersByCollegeName(college);
     }
 
-    @PostMapping("application-submit")
+    @PostMapping("/application-submit")
     public ResponseEntity<String> submitApplication(@RequestBody ApplicationDto applicationDto) {
         return applicantService.submitApplication(applicationDto);
+    }
+
+    @PostMapping("/my-job-applications")
+    public List<ApplicationDto> fetchApplicationsByEmail() {
+        return applicantService.fetchMyJobApplications();
     }
 
 }

@@ -74,4 +74,8 @@ public class ApplicationEntity {
     @JoinColumn(name = "offer_id", nullable = false)
     private OfferEntity offer;
 
+    @OneToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
+
 }

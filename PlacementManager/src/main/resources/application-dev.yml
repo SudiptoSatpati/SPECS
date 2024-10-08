@@ -14,3 +14,8 @@ spring:
     jwtSecret: D87naQQD45gu7bRUygV5lGHeiZgR6zML3eQQHVOuFRY=
     jwtExpirationMs: 259200000 #3days
 
+
+  redis:
+    host: localhost
+    port: 6379
+

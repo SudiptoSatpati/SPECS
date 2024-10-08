@@ -23,6 +23,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class AuthService {
 
+    private final RedisService redisService;
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final DepartmentService departmentService;
@@ -58,6 +59,8 @@ public class AuthService {
                 )
         );
         if (authentication.isAuthenticated()) {
+            String token = jwtUtils.generateToken(loginRequestDto.getEmail());
+            redisService.set(loginRequestDto.getEmail(), token, 1);
             return ResponseEntity.ok("User signed in successfully! \n Token: " + jwtUtils.generateToken(loginRequestDto.getEmail()));
         } else {
             return ResponseEntity.badRequest().body("Invalid username or password!");
