@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -33,15 +34,19 @@ public class AdminService {
             return ResponseEntity.badRequest().body("College is not registered");
         OfferEntity offerEntity = new OfferEntity();
         offerEntity.setCompany(offerDto.getCompany());
-        offerEntity.setCriteria(offerDto.getCriteria());
         offerEntity.setOffered_ctc(offerDto.getOffered_ctc());
-        offerEntity.setArriving_time(offerDto.getArriving_time());
         offerEntity.setJob_type(offerDto.getJob_type());
         offerEntity.setJob_role(offerDto.getJob_role());
-        offerEntity.setAdditional_info(offerDto.getAdditional_info());
+        offerEntity.setAdditional_info(new ArrayList<>(Arrays.asList(offerDto.getAdditional_info().split("\\R"))));
         offerEntity.setJob_location(offerDto.getJob_location());
-        offerEntity.setJob_description(offerDto.getJob_description());
+        offerEntity.setJob_description(new ArrayList<>(Arrays.asList(offerDto.getJob_description().split("\\R"))));
+        offerEntity.setQualifications(new ArrayList<>(Arrays.asList(offerDto.getQualifications().split("\\R"))));
+        offerEntity.setRequirements(new ArrayList<>(Arrays.asList(offerDto.getRequirements().split("\\R"))));
+        offerEntity.setResponsibilities(new ArrayList<>(Arrays.asList(offerDto.getResponsibilities().split("\\R"))));
+        offerEntity.setSalary_details(new ArrayList<>(Arrays.asList(offerDto.getSalary_details().split("\\R"))));
+        offerEntity.setExpires(offerDto.getExpires());
         offerEntity.setDepartments(offerDto.getDepartments());
+        offerEntity.setPosted(offerDto.getPosted());
         offerEntity.setSelected_candidates(offerDto.getSelected_candidates());
         offerEntity.setCollege(collegeService.findOrCreateCollege(college));
         offerEntity.setLogo(offerDto.getLogo());
@@ -68,7 +73,6 @@ public class AdminService {
         for (Object app : applications) {
             ApplicationEntity application = new ObjectMapper().convertValue(app, ApplicationEntity.class);
             applicationDto = new ApplicationDto();
-            applicationDto.setId(application.getId());
             applicationDto.setName(application.getName());
             applicationDto.setEmail(application.getEmail());
             applicationDto.setAddress(application.getAddress());

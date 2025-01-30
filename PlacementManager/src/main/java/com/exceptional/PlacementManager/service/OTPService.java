@@ -26,6 +26,7 @@ public class OTPService {
     }
 
     public boolean validateOTP(String key, String otp) {
+        System.out.println(otp);
         return otp.equals(otpStorage.get(key));
     }
 

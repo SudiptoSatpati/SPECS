@@ -21,6 +21,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -29,27 +31,70 @@ public class SecurityConfig {
     private final JwtFilter jwtFilter;
     private final MyUserDetailsService userDetailsService;
 
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        return http
+//                .cors(corsConfigurer -> corsConfigurer
+//                        .configurationSource(request -> {
+//                            var cors = new org.springframework.web.cors.CorsConfiguration();
+//                            cors.setAllowedOrigins(List.of(
+//                                    "http://localhost:8082",
+//                                    "http://localhost:8080"
+//                            )); // Allow specific origins
+//                            cors.setAllowedMethods(List.of(
+//                                    "GET", "POST", "PUT", "DELETE", "OPTIONS"
+//                            )); // Allow HTTP methods
+//                            cors.setAllowedHeaders(List.of("*")); // Allow all headers
+//                            cors.setAllowCredentials(true); // Allow credentials for cross-origin requests
+//                            return cors;
+//                        })
+//                )
+//                .csrf(AbstractHttpConfigurer::disable)
+//                .authorizeHttpRequests(request -> request
+//                        .requestMatchers(
+//                                "/login",
+//                                "/register",
+//                                "/signin",
+//                                "/register-verify-otp",
+//                                "/job-offers"
+//                        ).permitAll() // Public endpoints
+//                        .anyRequest().authenticated() // Secure all other endpoints
+//                )
+//                .httpBasic(Customizer.withDefaults())
+//                .sessionManagement(session -> session
+//                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+//                )
+//                .logout(logout -> logout
+//                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout")) // Specify logout endpoint
+//                        .logoutSuccessHandler((request, response, authentication) -> {
+//                            response.setStatus(HttpServletResponse.SC_OK);
+//                        })
+//                        .invalidateHttpSession(true) // Invalidate the session
+//                        .deleteCookies("JSESSIONID") // Delete session cookie
+//                )
+//
+//                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
+//
+//                .build();
+//    }
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-        return http.csrf(AbstractHttpConfigurer::disable).
-                authorizeHttpRequests(request -> request
-                        .requestMatchers("/login", "/register", "/signin", "/register-verify-otp").permitAll()
-                        .anyRequest().authenticated())
-
+        return http
+                .cors(Customizer.withDefaults()) // Use the CORS configuration from WebConfig
+                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for APIs
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/login", "/register", "/signin", "/register-verify-otp", "/job-offers").permitAll()
+                        .anyRequest().authenticated()
+                )
                 .httpBasic(Customizer.withDefaults())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .logout(logout -> logout
-                        .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))  // URL for logout
-                        .logoutSuccessHandler((request, response, authentication) -> {
-                            response.setStatus(HttpServletResponse.SC_OK);  // Respond with 200 OK on successful logout
-                        })
-                        .invalidateHttpSession(true)  // Invalidate the session
-                        .deleteCookies("JSESSIONID")  // Delete the session cookie
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
+
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
@@ -64,6 +109,5 @@ public class SecurityConfig {
         return config.getAuthenticationManager();
 
     }
-
 
 }

@@ -2,6 +2,7 @@ package com.exceptional.PlacementManager.service;
 
 import com.exceptional.PlacementManager.dto.ApplicationDto;
 import com.exceptional.PlacementManager.dto.OfferDto;
+import com.exceptional.PlacementManager.dto.Response;
 import com.exceptional.PlacementManager.entity.ApplicationEntity;
 import com.exceptional.PlacementManager.entity.OfferEntity;
 import com.exceptional.PlacementManager.repository.ApplicationRepository;
@@ -10,7 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -23,8 +23,7 @@ public class ApplicantService {
     private final AuthService authService;
     private final RedisService redisService;
 
-
-    public List<OfferDto> fetchJobOffersByCollegeName(String college) {
+    public List<OfferEntity> fetchJobOffersByCollegeName(String college) {
 
         List<OfferEntity> offers = redisService.get("job_offers_" + college, ArrayList.class);
 
@@ -32,30 +31,10 @@ public class ApplicantService {
             offers = offerRepository.findByCollegeName(college);
             redisService.set("job_offers_" + college, offers, 15);
         }
-        
-        List<OfferDto> _offers = new ArrayList<>();
-        OfferDto offerDto;
-        
-        for (Object offerObj : offers) {
-            OfferEntity offer = new ObjectMapper().convertValue(offerObj, OfferEntity.class);
-            offerDto = new OfferDto();
-            offerDto.setId(offer.getId());
-            offerDto.setCompany(offer.getCompany());
-            offerDto.setCriteria(offer.getCriteria());
-            offerDto.setOffered_ctc(offer.getOffered_ctc());
-            offerDto.setArriving_time(offer.getArriving_time());
-            offerDto.setJob_type(offer.getJob_type());
-            offerDto.setJob_role(offer.getJob_role());
-            offerDto.setAdditional_info(offer.getAdditional_info());
-            offerDto.setJob_location(offer.getJob_location());
-            offerDto.setJob_description(offer.getJob_description());
-            offerDto.setDepartments(offer.getDepartments());
-            offerDto.setSelected_candidates(offer.getSelected_candidates());
-            offerDto.setLogo(offer.getLogo());
-            _offers.add(offerDto);
-        }
-        return _offers;
+
+        return offers;
     }
+
 
     public List<ApplicationDto> fetchMyJobApplications() {
         String email = authService.getCurrentEmail();
@@ -71,7 +50,6 @@ public class ApplicantService {
         for (Object app : applications) {
             ApplicationEntity application = new ObjectMapper().convertValue(app, ApplicationEntity.class);
             applicationDto = new ApplicationDto();
-            applicationDto.setId(application.getId());
             applicationDto.setName(application.getName());
             applicationDto.setEmail(application.getEmail());
             applicationDto.setAddress(application.getAddress());
@@ -112,7 +90,7 @@ public class ApplicantService {
         return _applications;
     }
 
-    public ResponseEntity<String> submitApplication(ApplicationDto applicationDto) {
+    public Response submitApplication(ApplicationDto applicationDto) {
         ApplicationEntity applicationEntity = new ApplicationEntity();
         applicationEntity.setUser(authService.getCurrentUser());
         applicationEntity.setName(applicationDto.getName());
@@ -152,7 +130,7 @@ public class ApplicantService {
         applicationEntity.setResume(applicationDto.getResume());
         applicationEntity.setOffer(offerRepository.findByCompany(applicationDto.getCompany()));
         applicationRepository.save(applicationEntity);
-        return ResponseEntity.ok("Your application submitted successfully");
+        return new Response(true, "Your application submitted successfully", null);
     }
 
 }

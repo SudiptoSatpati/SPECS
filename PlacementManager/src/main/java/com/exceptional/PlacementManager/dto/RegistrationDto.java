@@ -11,7 +11,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RegistrationDto {
-    private Long id;
+    private String name;
     private String email;
     private String password;
     private String otp;

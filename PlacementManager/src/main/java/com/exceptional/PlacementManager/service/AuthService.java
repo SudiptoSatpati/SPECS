@@ -2,14 +2,16 @@ package com.exceptional.PlacementManager.service;
 
 import com.exceptional.PlacementManager.dto.LoginRequestDto;
 import com.exceptional.PlacementManager.dto.RegistrationDto;
+import com.exceptional.PlacementManager.dto.Response;
 import com.exceptional.PlacementManager.dto.UpdatePasswordDto;
 import com.exceptional.PlacementManager.entity.RoleEntity;
 import com.exceptional.PlacementManager.entity.UserEntity;
-import com.exceptional.PlacementManager.jwt.JwtUtils;
+//import com.exceptional.PlacementManager.jwt.JwtUtils;
 import com.exceptional.PlacementManager.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -29,53 +31,64 @@ public class AuthService {
     private final DepartmentService departmentService;
     private final CollegeService collegeService;
     private final AuthenticationManager authenticationManager;
-    private final JwtUtils jwtUtils;
+//    private final JwtUtils jwtUtils;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
 
-    public ResponseEntity<String> registerUser(RegistrationDto registrationDto) {
-        if (userRepository.findByEmail(registrationDto.getEmail()) != null) {
-            return ResponseEntity.badRequest().body("This email id is already registered.");
-        }
-        UserEntity userEntity = new UserEntity();
-        userEntity.setEmail(registrationDto.getEmail());
-        userEntity.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
-        userEntity.setDepartment(departmentService.findOrCreateDepartment(registrationDto.getDepartment()));
-        userEntity.setCollege(collegeService.findOrCreateCollege(registrationDto.getCollege()));
-        Set<RoleEntity> roles = new HashSet<>();
-        for (String role : registrationDto.getRoles()) {
-            roles.add(roleService.findOrCreateRole(role));
-        }
-        userEntity.setRoles(roles);
-        userRepository.save(userEntity);
-        return ResponseEntity.ok("User registered successfully.");
-    }
+    public Response<String> registerUser(RegistrationDto registrationDto) {
 
-    public ResponseEntity<String> authenticateUser(LoginRequestDto loginRequestDto) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequestDto.getEmail(),
-                        loginRequestDto.getPassword()
-                )
-        );
-        if (authentication.isAuthenticated()) {
-            String token = jwtUtils.generateToken(loginRequestDto.getEmail());
-            redisService.set(loginRequestDto.getEmail(), token, 1);
-            return ResponseEntity.ok("User signed in successfully! \n Token: " + jwtUtils.generateToken(loginRequestDto.getEmail()));
-        } else {
-            return ResponseEntity.badRequest().body("Invalid username or password!");
+        try {
+
+            if (userRepository.findByEmail(registrationDto.getEmail()) != null) {
+                return new Response<>(true, "This email id is already registered.", null);
+            }
+            UserEntity userEntity = new UserEntity();
+            userEntity.setName(registrationDto.getName());
+            userEntity.setEmail(registrationDto.getEmail());
+            userEntity.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
+            userEntity.setDepartment(departmentService.findOrCreateDepartment(registrationDto.getDepartment()));
+            userEntity.setCollege(collegeService.findOrCreateCollege(registrationDto.getCollege()));
+            Set<RoleEntity> roles = new HashSet<>();
+            for (String role : registrationDto.getRoles()) {
+                roles.add(roleService.findOrCreateRole(role));
+            }
+            userEntity.setRoles(roles);
+            userRepository.save(userEntity);
+            return new Response<>(true, "User registered successfully.", null);
+
+        } catch (Exception e) {
+            return new Response<>(false, e.getMessage(), null);
         }
     }
 
-    public ResponseEntity<String> updateUserPassword(UpdatePasswordDto updatePasswordDto) {
+    public Response<String> authenticateUser(LoginRequestDto loginRequestDto) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequestDto.getEmail(),
+                            loginRequestDto.getPassword()
+                    )
+            );
+
+//            String token = jwtUtils.generateToken(loginRequestDto.getEmail());
+//            redisService.set(loginRequestDto.getEmail(), token, 1);
+            return new Response<>(true, "User signed in successfully!", "");
+
+        } catch (BadCredentialsException ex) {
+            return new Response<>(false, "Invalid username or password!", null);
+        }
+    }
+
+
+    public Response<String> updateUserPassword(UpdatePasswordDto updatePasswordDto) {
         UserEntity userEntity = userRepository.findByEmail(updatePasswordDto.getEmail());
         if (userEntity == null) {
-            return ResponseEntity.badRequest().body("User not found");
+            return new Response<>(false, "User not found", null);
         }
 
         userEntity.setPassword(passwordEncoder.encode(updatePasswordDto.getNew_password()));
         userRepository.save(userEntity);
-        return ResponseEntity.ok("Password updated successfully");
+        return new Response<>(true, "Password updated successfully", null);
     }
 
     public UserEntity getCurrentUser() {
@@ -93,6 +106,7 @@ public class AuthService {
                 return principal.toString();
             }
         }
+
         return null;
     }
 

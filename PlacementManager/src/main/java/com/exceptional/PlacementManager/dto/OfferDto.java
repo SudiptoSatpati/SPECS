@@ -18,9 +18,13 @@ public class OfferDto {
     private String job_role;
     private String job_type;
     private String offered_ctc;
-    private String criteria;
+    private String requirements;
+    private String responsibilities;
+    private String qualifications;
+    private String salary_details;
     private List<String> departments;
     private String additional_info;
-    private String arriving_time;
+    private String posted;
+    private String expires;
     private List<String> selected_candidates;
 }
